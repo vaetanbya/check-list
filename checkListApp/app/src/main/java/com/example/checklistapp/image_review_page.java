@@ -54,6 +54,7 @@ public class image_review_page extends AppCompatActivity {
         prediction = predict();
         //removing
         if(prediction>0){dbHelper.removeProduct(db,availabel_names[prediction-1]);}
+        System.out.println(doInference("1"));
         //intent
         go_back();
     }

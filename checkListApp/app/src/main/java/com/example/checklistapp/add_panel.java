@@ -29,11 +29,13 @@ public class add_panel extends AppCompatActivity {
         String product_name = String.valueOf(name_bar.getText()).toLowerCase();
         int product_count = 1;
 
-        if(not_available(product_name) && product_count>0){
+        if(not_available(product_name) || product_count<=0){
             clear();
             return;
         }
         //add product
+        if(dbHelper.exist(db, product_name))
+            dbHelper.deleteAll(db, product_name);
         dbHelper.addProduct(db,product_name,product_count);
         //clear
         clear();

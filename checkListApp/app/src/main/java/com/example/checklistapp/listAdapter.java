@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import androidx.appcompat.widget.AppCompatImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,8 +19,7 @@ public class listAdapter extends RecyclerView.Adapter<listAdapter.viewHolder> {
     public  static class viewHolder extends RecyclerView.ViewHolder{
         public TextView textView;
         public TextView countView;
-        public Button delete;
-        public Button change;
+        public AppCompatImageButton delete,change;
 
         public viewHolder(View itemView){
             super(itemView);
@@ -46,20 +45,27 @@ public class listAdapter extends RecyclerView.Adapter<listAdapter.viewHolder> {
     public void onBindViewHolder(@NonNull viewHolder viewHolder, int i) {
         goodExample item = products_list.get(i);
 
-        viewHolder.countView.setText(item.getCount());
+        viewHolder.countView.setText(String.valueOf(item.getCount()));
         viewHolder.textView.setText(item.getName());
         viewHolder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //removing
+                //remove
+                DBHelper dbHelper = new DBHelper(view.getContext());
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                dbHelper.removeProduct(db, item.getId());
                 //update
+                Intent intent = new Intent(view.getContext(),MainActivity.class);
+                view.getContext().startActivity(intent);
             }
         });
         viewHolder.change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //intent
-
+                Intent intent = new Intent(view.getContext(),change_page.class);
+                intent.putExtra("id",item.getId());
+                view.getContext().startActivity(intent);
             }
         });
     }

@@ -44,10 +44,11 @@ public class change_page extends AppCompatActivity {
         }
         //change data
         dbHelper.removeProduct(db, id);
-        if(dbHelper.exist(db,product_name))
-            dbHelper.changeRow(db,product_name,product_count);
-        else
+        if(dbHelper.exist(db,product_name)) {
+            dbHelper.changeRow(db, product_name, product_count);
+        }else{
             dbHelper.addProduct(db,product_name,product_count);
+        }
         //clear
         clear();
         //intent

@@ -1,9 +1,9 @@
 package com.example.checklistapp;
 
 public class goodExample {
+    private int id;
     private String name;
     private int count;
-    private int id;
 
     public goodExample(int Id, String Name,int Count){
         id = Id;

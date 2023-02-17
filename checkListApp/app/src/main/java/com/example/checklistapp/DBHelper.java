@@ -7,8 +7,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 public class DBHelper  extends SQLiteOpenHelper{
 
@@ -48,11 +54,11 @@ public class DBHelper  extends SQLiteOpenHelper{
     }
 
     public void removeProduct(SQLiteDatabase db,String name){
-        db.delete(DATABASE_NAME, KEY_NAME + "=?", new String[]{name});
+        db.delete(TABLE_NAME, KEY_NAME + "=?", new String[]{name});
     }
 
     public void removeProduct(SQLiteDatabase db,int id){
-        db.delete(DATABASE_NAME, KEY_ID + "=?", new String[]{String.valueOf(id)});
+        db.delete(TABLE_NAME, KEY_ID + "=?", new String[]{String.valueOf(id)});
     }
 
     public void changeRow(SQLiteDatabase db,int id, String product_name,int product_count){
@@ -70,27 +76,31 @@ public class DBHelper  extends SQLiteOpenHelper{
     }
 
     public boolean exist(SQLiteDatabase db,String name){
-        String Query = "Select * from " + TABLE_NAME + " where " + KEY_NAME + " = " + name;
-        Cursor cursor = db.rawQuery(Query, null);
-        if(cursor.getCount() <= 0){
-            cursor.close();
-            return false;
+        @SuppressLint("Recycle") Cursor  cursor = db.rawQuery("select * from " + TABLE_NAME + " where " + KEY_NAME + " like \"" + name + "\"",null);
+        return cursor.getCount()>0;
+    }
+
+    public void deleteAll(SQLiteDatabase db,String name){
+        @SuppressLint("Recycle") Cursor  cursor = db.rawQuery("select * from " + TABLE_NAME + " where " + KEY_NAME + " like \"" + name + "\"",null);
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(KEY_ID));
+                removeProduct(db,id);
+                cursor.moveToNext();
+            }
         }
         cursor.close();
-        return true;
     }
 
     public ArrayList<goodExample> getAllRows(SQLiteDatabase db){
-        ArrayList<goodExample> list = new ArrayList<goodExample>();
-        Cursor  cursor = db.rawQuery("select * from "+TABLE_NAME,null);;
+        ArrayList<goodExample> list = new ArrayList<>();
+        @SuppressLint("Recycle") Cursor  cursor = db.rawQuery("select * from "+TABLE_NAME,null);
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(KEY_ID));
                 @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(KEY_NAME));
                 @SuppressLint("Range") int count = cursor.getInt(cursor.getColumnIndex(KEY_COUNT));
-
                 list.add(new goodExample(id, name, count));
-
                 cursor.moveToNext();
             }
         }
